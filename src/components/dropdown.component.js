@@ -9,9 +9,11 @@ class DropDown extends React.Component {
   constructor(props) {
     super(props);
   }
-
-  handleClick = (loc) => {
-    window.location = loc;
+  //todo: fix this
+  handleClick = (evt, q, i, link) => {
+    // window.location = loc;
+    this.props.parentCallBack(q, true);
+    evt.preventDefault();
   }
 
   render() {
@@ -22,7 +24,7 @@ class DropDown extends React.Component {
             this.props.displayResults.map(
                       (query, i) =>
                         <div className="autoCompleteItem" onClick =
-                        {evt => this.handleClick(query.link)} key={i}>{query.name}</div>
+                        {evt => this.handleClick(evt, query, i, query.link)} key={i}>{query.name}</div>
                     )
           }
         </div>

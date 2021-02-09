@@ -3,7 +3,7 @@ import React from 'react';
 import '../block.css';
 import {search} from "../utils.js"
 import DropDown from "./dropdown.component"
-
+import Loaded from "./loaded.component"
 
 class SearchBar extends React.Component {
 
@@ -15,9 +15,12 @@ class SearchBar extends React.Component {
       results: [],
       resultsEmpty: true,
       loading: false,
-      access_token: ""
+      selectedEmpty: true,
+      selectedPodcasts: [],
+      accessToken: ""
     };
   }
+
 
   onChangeHandler = async e => {
     if (e.target.value) {
@@ -61,11 +64,15 @@ class SearchBar extends React.Component {
 
   search = async query => {
     this.setState({loading: true});
-    const set_token = await this.authorize();
-    this.setState({access_token:set_token});
+    if (!this.state.accessToken) {
+      const set_token = await this.authorize();
+      this.setState({accessToken:set_token});
+      console.log(this.state.accessToken)
+    }
+
 
     //await means async request
-    const res = await search(set_token, `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=episode&limit=8&market=us`);
+    const res = await search(this.state.accessToken, `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=episode&limit=8&market=us`);
 
     //access relevant information from data returned by the API
     const recommendations = await res
@@ -89,19 +96,25 @@ class SearchBar extends React.Component {
     console.log(recs);
   }
 
+
+  getSelectedPodcasts = (childData, isSelected) => {
+    this.setState({selectedPodcasts: childData, selectedEmpty: isSelected});
+    console.log(this.state.selectedPocasts);
+  }
+
   render() {
     return (
       //React fragment: used to group multiple elements together
       <>
+        <Loaded load = {!this.state.selectedEmpty}
+                selectedPodcasts = {this.state.selectedPodcasts}/>
         <div className="searchBlock">
           <div className="inputContainer block wrapper">
             <input type="search" placeholder="Search for similar podcasts to"
                   onChange = {evt => this.onChangeHandler(evt)}
                   autoFocus/>
-          {/*   ${this.autoCompletes && this.inputFocused
-           ? AutoCompleteDropdown(this.autoCompletes, this.tabIdx)
-           : null}*/}
-           <DropDown displayResults={this.state.results}
+           <DropDown parentCallBack = {this.getSelectedPodcasts}
+                     displayResults={this.state.results}
                      load={!this.state.resultsEmpty}/>
           </div>
           <button onClick={this.handleSearchClick} className="block">Generate!</button>
