@@ -3,7 +3,7 @@ import axios from 'axios';
 const makeRequestCreator = () => {
   let token;
 
-  return async query => {
+  return async (access_token, query) => {
     // Check if we made a request
     if(token){
       // Cancel the previous request before making a new request
@@ -11,8 +11,16 @@ const makeRequestCreator = () => {
     }
     // Create a new CancelToken
     token = axios.CancelToken.source()
-    try{
-      const res = await axios(query, {cancelToken: token.token})
+    try {
+
+      let myHeaders = new Headers();
+      myHeaders.append('Authorization', `Bearer ${access_token}`);
+
+      const res = await axios(query, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      }, {cancelToken: token.token})
       //add what to return specifically
       const result = res.data
       return result;

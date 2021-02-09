@@ -16,6 +16,31 @@ input {
   font-size: 20px;
 }
 
+.autoCompleteDropdown {
+  background: white;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 3px solid var(--cf-black);
+  border-top: 0;
+}
+
+.autoCompleteItem {
+  border-top: 1px solid #aaa;
+  background-color: white;
+  padding: 6px 8px;
+  cursor: pointer;
+  z-index: 200;
+}
+
+.autoCompleteItem:hover {
+  background-color: #697388;
+}
+
+.autoCompleteItem:active {
+  background: #bfbfbf;
+}
 
 .block.fixed {
   cursor: initial;

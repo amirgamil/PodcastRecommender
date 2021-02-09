@@ -1,9 +1,9 @@
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import '../block.css';
-import axios from "axios"
 import {search} from "../utils.js"
+import DropDown from "./dropdown.component"
+
 
 class SearchBar extends React.Component {
 
@@ -12,15 +12,18 @@ class SearchBar extends React.Component {
 
     this.state = {
       query: "",
-      results: {},
+      results: [],
+      resultsEmpty: true,
       loading: false,
-      message: ""
-    }
+      access_token: ""
+    };
   }
 
   onChangeHandler = async e => {
-    this.search(e.target.value);
-    this.setState({query: e.target.value});
+    if (e.target.value) {
+      this.search(e.target.value);
+      this.setState({query: e.target.value});
+    }
   };
 
   handleSearchClick = () => {
@@ -32,15 +35,60 @@ class SearchBar extends React.Component {
   };
 
 
+  async authorize() {
+      const apiIDs = {my_clientID: process.env.REACT_APP_CLIENT_ID,
+               client_secret: process.env.REACT_APP_CLIENT_SECRET};
+      console.log(process.env.REACT_APP_CLIENT_SECRET);
+      const stringRequest = new Buffer(apiIDs.my_clientID + ":" + apiIDs.client_secret).toString('base64')
+
+      let myHeaders = new Headers();
+      myHeaders.append("Authorization", `Basic ${stringRequest}`);
+      // myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+      var urlencoded = new URLSearchParams();
+      urlencoded.append("grant_type", "client_credentials");
+
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: urlencoded,
+        redirect: 'follow'
+      }
+
+      let res = await fetch("https://accounts.spotify.com/api/token", requestOptions);
+      res = await res.json();
+      return res.access_token;
+    }
+
   search = async query => {
     this.setState({loading: true});
-    console.log(encodeURIComponent(query));
+    const set_token = await this.authorize();
+    this.setState({access_token:set_token});
+
     //await means async request
-    const res = await search(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=show,episode&limit=10`);
+    const res = await search(set_token, `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=episode&limit=8&market=us`);
+
     //access relevant information from data returned by the API
     const recommendations = await res
-    this.setState({loading: false, results:recommendations});
+    this.setState({loading: false});
+    this.handleRecommendations(recommendations);
   };
+
+  handleRecommendations(recs) {
+    var resultsArray = [];
+    try {
+      recs.episodes.items.forEach(dict => resultsArray.push({name:dict.name,
+                                                            link: dict.external_urls.spotify})
+                                 );
+    } catch (error) {
+      console.log('Error processing result of search');
+    }
+    this.setState({results: resultsArray});
+    if (resultsArray.length != 0) {
+      this.setState({resultsEmpty: false});
+    }
+    console.log(resultsArray);
+  }
 
   render() {
     return (
@@ -54,6 +102,8 @@ class SearchBar extends React.Component {
           {/*   ${this.autoCompletes && this.inputFocused
            ? AutoCompleteDropdown(this.autoCompletes, this.tabIdx)
            : null}*/}
+           <DropDown displayResults={this.state.results}
+                     load={!this.state.resultsEmpty}/>
           </div>
           <button onClick={this.handleSearchClick} className="block">Generate!</button>
         </div>
