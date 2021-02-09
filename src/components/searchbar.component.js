@@ -38,7 +38,6 @@ class SearchBar extends React.Component {
   async authorize() {
       const apiIDs = {my_clientID: process.env.REACT_APP_CLIENT_ID,
                client_secret: process.env.REACT_APP_CLIENT_SECRET};
-      console.log(process.env.REACT_APP_CLIENT_SECRET);
       const stringRequest = new Buffer(apiIDs.my_clientID + ":" + apiIDs.client_secret).toString('base64')
 
       let myHeaders = new Headers();
@@ -87,7 +86,7 @@ class SearchBar extends React.Component {
     if (resultsArray.length != 0) {
       this.setState({resultsEmpty: false});
     }
-    console.log(resultsArray);
+    console.log(recs);
   }
 
   render() {
