@@ -67,7 +67,7 @@ class SearchBar extends React.Component {
     if (!this.state.accessToken) {
       const set_token = await this.authorize();
       this.setState({accessToken:set_token});
-      console.log(this.state.accessToken)
+      // console.log(this.state.accessToken)
     }
 
 
@@ -93,13 +93,14 @@ class SearchBar extends React.Component {
     if (resultsArray.length != 0) {
       this.setState({resultsEmpty: false});
     }
-    console.log(recs);
   }
 
 
-  getSelectedPodcasts = (childData, isSelected) => {
-    this.setState({selectedPodcasts: childData, selectedEmpty: isSelected});
-    console.log(this.state.selectedPocasts);
+  getSelectedPodcasts = (childData, isEmpty) => {
+    //modifying selectedPodcasts array by appending it to end of existing
+    this.setState({selectedPodcasts: [...this.state.selectedPodcasts, childData],
+                  selectedEmpty: isEmpty});
+    // console.log(this.state.selectedPodcasts);
   }
 
   render() {

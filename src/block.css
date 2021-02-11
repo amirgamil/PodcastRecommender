@@ -9,6 +9,11 @@ body{--block-text-color:#222;--block-background-color:#fff;--block-accent-color:
   padding: 0;
 }
 
+
+.selectedPodcast {
+  color: white;
+}
+
 input {
   outline: none;
   width: calc(100% - 12px);

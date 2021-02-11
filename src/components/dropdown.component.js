@@ -12,7 +12,7 @@ class DropDown extends React.Component {
   //todo: fix this
   handleClick = (evt, q, i, link) => {
     // window.location = loc;
-    this.props.parentCallBack(q, true);
+    this.props.parentCallBack({name:q.name, link:q.link}, false);
     evt.preventDefault();
   }
 

@@ -13,6 +13,7 @@ class Loaded extends React.Component {
     return (
       <>
         <div className="storedResults">
+          {console.log(this.props.load)}
           {this.props.load &&
             this.props.selectedPodcasts.map(
                       (query, i) =>
