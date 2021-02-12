@@ -13,13 +13,14 @@ class Loaded extends React.Component {
     return (
       <>
         <div className="storedResults">
-          {console.log(this.props.load)}
+          <ul>
           {this.props.load &&
             this.props.selectedPodcasts.map(
                       (query, i) =>
-                        <a className="selectedPocast" key={i}>{query.name}</a>
+                        <li className="selectedPocast" key={i}>{query.name}</li>
                     )
           }
+          </ul>
         </div>
       </>
     )

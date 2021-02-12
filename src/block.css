@@ -12,6 +12,7 @@ body{--block-text-color:#222;--block-background-color:#fff;--block-accent-color:
 
 .selectedPodcast {
   color: white;
+  font-size: 10px;
 }
 
 input {
